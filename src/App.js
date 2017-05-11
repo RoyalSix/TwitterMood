@@ -6,19 +6,6 @@ var _ = require('lodash');
 var bayes = require('bayes');
 var classifier = bayes();
 var request = require('request');
-// const TWITTER_CONSUMER_KEY = "toMMj1XMujQ2rD7b4gAWXmeZ0";
-// const TWITTER_CONSUMER_SECRET = "m1pREGK1EgXJiminqpklGgOIoWhaISYw5FLXkdvZRrhcEby54w";
-// const TWITTER_ACCESS_TOKEN =  "354504507-98WaGRfkAxcnb4ECiV35bdXPa9ebKJpqm0Bg8OsT";
-// const TWITTER_ACCESS_TOKEN_SECRET = "fgdyrMh1Q4ZXdmVRYiDtixgUn6RuUDGskVw9UEnHpysON";
-
-// var twitter = new Twit({
-//   consumer_key: TWITTER_CONSUMER_KEY,
-//   consumer_secret: TWITTER_CONSUMER_SECRET,
-//   access_token: TWITTER_ACCESS_TOKEN,
-//   access_token_secret: TWITTER_ACCESS_TOKEN_SECRET
-// });
-// var testRegex = '(.*I had.*|.*(I am))|(.*( day).*)|(.*( feel).*)|(I.*now|.*I)';
-// var tweetStream = twitter.stream('statuses/filter', { track: ['I'], language: 'en' });
 
 class App extends Component {
   constructor(props) {
@@ -37,7 +24,19 @@ class App extends Component {
     xhr.send();
     xhr.onreadystatechange = (e) => {
       if (xhr.readyState == 4 && xhr.status == 200) {
-        this.setState({tweetText:xhr.responseText})
+        this.setState({ tweetText: xhr.responseText })
+        this.getCategory(xhr.responseText.toString());
+      }
+    };
+  }
+
+  getCategory(tweet) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', `http://35.187.165.232:8080/categorize?tweet=${tweet}`, true);
+    xhr.send();
+    xhr.onreadystatechange = (e) => {
+      if (xhr.readyState == 4 && xhr.status == 200) {
+        this.setState({ attemptedCat: xhr.responseText });
       }
     };
   }
@@ -85,8 +84,8 @@ class App extends Component {
           <h2>Welcome to Applia.io</h2>
         </div>
         <p className="App-intro">
-          <div>Current Tweet: {this.state.tweetText}</div>
-          <div>Attempted categorization: {this.state.attemptedCat} </div>
+          <div>Current Tweet: {this.state.tweetText.replace(/^"(.+(?="$))"$/, '$1')}</div>
+          <div>Attempted categorization: {this.state.attemptedCat.replace(/^"(.+(?="$))"$/, '$1')} </div>
           <button onClick={() => this.pressedButton('p')}>Positive</button>
           <button onClick={() => this.pressedButton('n')}>Negative</button>
         </p>
