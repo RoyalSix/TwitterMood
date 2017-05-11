@@ -26,7 +26,8 @@ class App extends Component {
     var xhr = new XMLHttpRequest();
     xhr.open('POST', `http://${IP}:8080/train`, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhr.send(`tweet=${JSON.stringify(this.state.tweet)}?category=${category}`);
+    var stringTweet = encodeURIComponent(JSON.stringify(this.state.tweet));
+    xhr.send(`tweet=${stringTweet}&category=${category}`);
     xhr.onreadystatechange = (e) => {
       if (xhr.readyState == 4 && xhr.status == 200) {
         callback();
@@ -41,7 +42,7 @@ class App extends Component {
     xhr.onreadystatechange = (e) => {
       if (xhr.readyState == 4 && xhr.status == 200) {
         const tweetObj = JSON.parse(xhr.response);
-        this.setState({tweet: tweetObj, tweetText: tweetObj.text})
+        this.setState({ tweet: tweetObj, tweetText: tweetObj.text })
         this.getCategory(xhr.responseText.toString());
       }
     };
@@ -60,7 +61,7 @@ class App extends Component {
 
   pressedButton(input) {
     if (!input) return this.getNewTweet();
-    this.trainTweetForCategory(this.state.tweetText, input, (err)=>{
+    this.trainTweetForCategory(this.state.tweetText, input, (err) => {
       if (!err) {
         this.getNewTweet();
       }
