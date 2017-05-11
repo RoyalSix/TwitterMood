@@ -82,8 +82,8 @@ class App extends Component {
         <p className="App-intro">
           <div>Current Tweet: {this.state.tweetSafeText.replace(/^"(.+(?="$))"$/, '$1')}</div>
           <div>Attempted categorization: {this.state.attemptedCat.replace(/^"(.+(?="$))"$/, '$1')} </div>
-          <button onClick={() => this.pressedButton('p')}>Positive</button>
-          <button onClick={() => this.pressedButton('n')}>Negative</button>
+          <button onClick={() => this.pressedButton('positive')}>Positive</button>
+          <button onClick={() => this.pressedButton('negative')}>Negative</button>
           <button onClick={() => this.pressedButton()}>Skip</button>
         </p>
       </div>
