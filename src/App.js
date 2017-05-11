@@ -43,14 +43,16 @@ class App extends Component {
       if (xhr.readyState == 4 && xhr.status == 200) {
         const tweetObj = JSON.parse(xhr.response);
         this.setState({ tweet: tweetObj, tweetText: tweetObj.text })
-        this.getCategory(xhr.responseText.toString());
+        this.getCategory(xhr.responseText);
       }
     };
   }
 
   getCategory(tweet) {
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', `http://${IP}:8080/categorize?tweet=${tweet}`, true);
+    var encodedTweet = encodeURIComponent(tweet);
+    xhr.open('GET', `http://${IP}:8080/categorize?tweet=${encodedTweet}`, true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhr.send();
     xhr.onreadystatechange = (e) => {
       if (xhr.readyState == 4 && xhr.status == 200) {
