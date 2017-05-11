@@ -7,24 +7,41 @@ var bayes = require('bayes');
 var classifier = bayes();
 var request = require('request');
 
+const IP = "localhost"
+
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       attemptedCat: "Loading",
-      done: true,
-      tweet: "Loading Tweet",
       tweetText: "Loading Tweet",
-      tweetsArray: []
+      tweet: null
     };
   }
   componentWillMount() {
+    this.getNewTweet();
+  }
+
+  trainTweetForCategory(tweet, category, callback) {
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', "http://35.187.165.232:8080/tweet", true);
+    xhr.open('POST', `http://${IP}:8080/train`, true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.send(`tweet=${JSON.stringify(this.state.tweet)}?category=${category}`);
+    xhr.onreadystatechange = (e) => {
+      if (xhr.readyState == 4 && xhr.status == 200) {
+        callback();
+      } else callback(e || "ERROR");
+    };
+  }
+
+  getNewTweet() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', `http://${IP}:8080/tweet`, true);
     xhr.send();
     xhr.onreadystatechange = (e) => {
       if (xhr.readyState == 4 && xhr.status == 200) {
-        this.setState({ tweetText: xhr.responseText })
+        const tweetObj = JSON.parse(xhr.response);
+        this.setState({tweet: tweetObj, tweetText: tweetObj.text})
         this.getCategory(xhr.responseText.toString());
       }
     };
@@ -32,7 +49,7 @@ class App extends Component {
 
   getCategory(tweet) {
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', `http://35.187.165.232:8080/categorize?tweet=${tweet}`, true);
+    xhr.open('GET', `http://${IP}:8080/categorize?tweet=${tweet}`, true);
     xhr.send();
     xhr.onreadystatechange = (e) => {
       if (xhr.readyState == 4 && xhr.status == 200) {
@@ -40,42 +57,17 @@ class App extends Component {
       }
     };
   }
-  trainData() {
-    this.setState({ done: false })
-    if (this.state.tweetsArray) {
-      const tweet = this.state.tweetsArray[0];
-      var tweetText = tweet.extended_tweet ? tweet.extended_tweet.full_text : tweet.retweeted_status ? tweet.retweeted_status.text : tweet.text;
-      tweetText = tweetText.replace(/(http.+(\S|\b|\n))/g, '').trim();
-      var attemptedCat = classifier.categorize(tweetText);
-      this.setState({
-        tweetText: tweetText,
-        attemptedCat: attemptedCat,
-        tweet: tweet
-      })
-    }
-  }
 
   pressedButton(input) {
-    debugger;
-    const currentArrayOfTweets = this.state.tweetsArray.splice(0);
-    if (input == "p") classifier.learn(this.state.tweetText, 'positive');
-    else if (input == "n") classifier.learn(this.state.tweetText, 'negative');
-    var stateJson = classifier.toJson();
-    input = input || "neu";
-    //if (input != "neu") followersData[input].push({ followers: tweet.user.followers_count, username: tweet.user.screen_name })
-    try {
-      //fs.writeJSONSync('./bayesData.json', stateJson)
-      //fs.writeJSONSync('./followersData.json', followersData)
-    } catch (e) {
-      console.log(e);
-    }
-    this.done = true;
-    if (currentArrayOfTweets.length > 0) {
-      currentArrayOfTweets.shift();
-      this.setState({ tweetsArray: currentArrayOfTweets })
-      this.trainData();
-    }
+    if (!input) return this.getNewTweet();
+    this.trainTweetForCategory(this.state.tweetText, input, (err)=>{
+      if (!err) {
+        this.getNewTweet();
+      }
+    })
   }
+
+
   render() {
     return (
       <div className="App">
@@ -88,6 +80,7 @@ class App extends Component {
           <div>Attempted categorization: {this.state.attemptedCat.replace(/^"(.+(?="$))"$/, '$1')} </div>
           <button onClick={() => this.pressedButton('p')}>Positive</button>
           <button onClick={() => this.pressedButton('n')}>Negative</button>
+          <button onClick={() => this.pressedButton()}>Skip</button>
         </p>
       </div>
     );
