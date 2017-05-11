@@ -15,6 +15,7 @@ class App extends Component {
     this.state = {
       attemptedCat: "Loading",
       tweetText: "Loading Tweet",
+      tweetSafeText: "Loading...",
       tweet: null
     };
   }
@@ -42,7 +43,7 @@ class App extends Component {
     xhr.onreadystatechange = (e) => {
       if (xhr.readyState == 4 && xhr.status == 200) {
         const tweetObj = JSON.parse(xhr.response);
-        this.setState({ tweet: tweetObj, tweetText: tweetObj.text })
+        this.setState({ tweet: tweetObj, tweetText: tweetObj.text, tweetSafeText: tweetObj.safeText})
         this.getCategory(xhr.responseText);
       }
     };
@@ -79,7 +80,7 @@ class App extends Component {
           <h2>Welcome to Applia.io</h2>
         </div>
         <p className="App-intro">
-          <div>Current Tweet: {this.state.tweetText.replace(/^"(.+(?="$))"$/, '$1')}</div>
+          <div>Current Tweet: {this.state.tweetSafeText.replace(/^"(.+(?="$))"$/, '$1')}</div>
           <div>Attempted categorization: {this.state.attemptedCat.replace(/^"(.+(?="$))"$/, '$1')} </div>
           <button onClick={() => this.pressedButton('p')}>Positive</button>
           <button onClick={() => this.pressedButton('n')}>Negative</button>
