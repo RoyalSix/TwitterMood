@@ -1,11 +1,6 @@
 import React, { Component } from 'react';
 import logo from './applia_icon.png';
 import './App.css';
-var Twit = require('twit');
-var _ = require('lodash');
-var bayes = require('bayes');
-var classifier = bayes();
-var request = require('request');
 
 const local = true;
 const IP = local ? "localhost" : "35.187.165.232";
