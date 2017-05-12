@@ -7,7 +7,8 @@ var bayes = require('bayes');
 var classifier = bayes();
 var request = require('request');
 
-const IP = "localhost"
+const local = true;
+const IP = local ? "localhost" : "35.187.165.232";
 
 class App extends Component {
   constructor(props) {
@@ -16,7 +17,9 @@ class App extends Component {
       attemptedCat: "Loading",
       tweetText: "Loading Tweet",
       tweetSafeText: "Loading...",
-      tweet: null
+      tweet: null,
+      posAvg: null,
+      negAvg: null
     };
   }
   componentWillMount() {
@@ -37,13 +40,14 @@ class App extends Component {
   }
 
   getNewTweet() {
+    this.getTweetAnaylsis();
     var xhr = new XMLHttpRequest();
     xhr.open('GET', `http://${IP}:8080/tweet`, true);
     xhr.send();
     xhr.onreadystatechange = (e) => {
       if (xhr.readyState == 4 && xhr.status == 200) {
         const tweetObj = JSON.parse(xhr.response);
-        this.setState({ tweet: tweetObj, tweetText: tweetObj.text, tweetSafeText: tweetObj.safeText})
+        this.setState({ tweet: tweetObj, tweetText: tweetObj.text, tweetSafeText: tweetObj.safeText })
         this.getCategory(xhr.responseText);
       }
     };
@@ -71,8 +75,23 @@ class App extends Component {
     })
   }
 
+  getTweetAnaylsis() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', `http://${IP}:8080/analysis`, true);
+    xhr.send();
+    xhr.onreadystatechange = (e) => {
+      if (xhr.readyState == 4 && xhr.status == 200) {
+        const tweetObj = JSON.parse(xhr.response);
+        this.setState({ posAvg: parseInt(tweetObj.posAvg), negAvg: parseInt(tweetObj.negAvg) })
+      }
+    };
+  }
+
 
   render() {
+    const betterAmount = this.state.posAvg > this.state.negAvg ? "happy" : "not happy";
+    const worstAmount = this.state.posAvg < this.state.negAvg ? "happy" : "not happy";
+    var twitterStatement = `Users who are ${betterAmount} have ${Math.round((Math.abs(this.state.posAvg - this.state.negAvg) / Math.max(this.state.posAvg, this.state.negAvg)) * 100)}% more followers than those are ${worstAmount}`;
     return (
       <div className="App">
         <div className="App-header">
@@ -82,9 +101,16 @@ class App extends Component {
         <p className="App-intro">
           <div>Current Tweet: {this.state.tweetSafeText.replace(/^"(.+(?="$))"$/, '$1')}</div>
           <div>Attempted categorization: {this.state.attemptedCat.replace(/^"(.+(?="$))"$/, '$1')} </div>
-          <button onClick={() => this.pressedButton('positive')}>Positive</button>
-          <button onClick={() => this.pressedButton('negative')}>Negative</button>
-          <button onClick={() => this.pressedButton()}>Skip</button>
+          <button style={{ margin: 5 }} onClick={() => this.pressedButton('positive')}>Positive</button>
+          <button style={{ margin: 5 }} onClick={() => this.pressedButton('negative')}>Negative</button>
+          <button style={{ margin: 5 }} onClick={() => this.pressedButton()}>Skip</button>
+          <div>
+            <p>Average of followers of users who are positive: {this.state.posAvg}</p>
+            <p>Average of followers of users who are negative: {this.state.negAvg}</p>
+          </div>
+          <div>
+            {twitterStatement}
+          </div>
         </p>
       </div>
     );
