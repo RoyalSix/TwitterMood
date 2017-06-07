@@ -16,5 +16,8 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "deploy": "npm run build && firebase deploy"
+  },
+  "engines": {
+    "node": "4.6.0"
   }
 }

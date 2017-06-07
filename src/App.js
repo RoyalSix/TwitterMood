@@ -3,7 +3,6 @@ import logo from './applia_icon.png';
 import './App.css';
 
 const local = true;
-const IP = local ? "localhost" : "35.187.165.232";
 
 class App extends Component {
   constructor(props) {
@@ -23,7 +22,7 @@ class App extends Component {
 
   trainTweetForCategory(tweet, category, callback) {
     var xhr = new XMLHttpRequest();
-    xhr.open('POST', `http://${IP}:8080/train`, true);
+    xhr.open('POST', `https://royalsix-twitter.herokuapp.com/train`, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     var stringTweet = encodeURIComponent(JSON.stringify(this.state.tweet));
     xhr.send(`tweet=${stringTweet}&category=${category}`);
@@ -37,7 +36,7 @@ class App extends Component {
   getNewTweet() {
     this.getTweetAnaylsis();
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', `http://${IP}:8080/tweet`, true);
+    xhr.open('GET', `https://royalsix-twitter.herokuapp.com/tweet`, true);
     xhr.send();
     xhr.onreadystatechange = (e) => {
       if (xhr.readyState == 4 && xhr.status == 200) {
@@ -51,7 +50,7 @@ class App extends Component {
   getCategory(tweet) {
     var xhr = new XMLHttpRequest();
     var encodedTweet = encodeURIComponent(tweet);
-    xhr.open('GET', `http://${IP}:8080/categorize?tweet=${encodedTweet}`, true);
+    xhr.open('GET', `https://royalsix-twitter.herokuapp.com/categorize?tweet=${encodedTweet}`, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhr.send();
     xhr.onreadystatechange = (e) => {
@@ -72,7 +71,7 @@ class App extends Component {
 
   getTweetAnaylsis() {
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', `http://${IP}:8080/analysis`, true);
+    xhr.open('GET', `https://royalsix-twitter.herokuapp.com/analysis`, true);
     xhr.send();
     xhr.onreadystatechange = (e) => {
       if (xhr.readyState == 4 && xhr.status == 200) {
