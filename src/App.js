@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import logo from './applia_icon.png';
 import next_button from './next_button.svg';
+import reload from './reload.svg'
 import './App.css';
 const twitterLogo = "https://upload.wikimedia.org/wikipedia/en/9/9f/Twitter_bird_logo_2012.svg";
 
@@ -121,17 +122,20 @@ class App extends Component {
           <h2>Welcome to Applia.io</h2>
         </div>
         <div className="App-intro" style={{ display: 'flex', justifyContent: 'center', margin: 20, }}>
-          <div style={{ flexDirection: 'column', width: 600, height: 350, borderWidth: .5, borderRadius: 5, display: 'flex', }}>
+          <div style={{ flexDirection: 'column', width: 600, height: 'auto', borderWidth: .5, borderRadius: 5, display: 'flex', }}>
             <TweetTop {...this.state} />
             <div style={{ flexDirection: 'column', display: 'flex', marginLeft: 15, marginRight: 15, fontFamily: "Helvetica Neue", textAlign: 'left', }}>
               <div>{this.state.tweetSafeText}</div>
             </div>
             {!this.state.buttonChange ?
               <ClassificationButtons attemptedCat={this.state.attemptedCat} changeButtons={this.changeButtons} buttonBackgroundColor={buttonBackgroundColor} /> :
-              <ClassificationButtonsChange changeClassification={(classification)=>this.setState({attemptedCat:classification,buttonChange:!this.state.buttonChange })}/>
+              <ClassificationButtonsChange changeClassification={(classification) => this.setState({ attemptedCat: classification, buttonChange: !this.state.buttonChange })} />
             }
           </div>
+      <div style={{ display: 'flex', flexDirection:'column', justifyContent:'space-around' }}>
           <img onClick={() => this.pressedButton(this.state.attemptedCat)} src={next_button} style={{ height: 70, width: 70, alignSelf: 'center', marginLeft: 20 }} />
+           <img onClick={() => this.pressedButton()} src={reload} style={{ height: 70, width: 70, alignSelf: 'center', marginLeft: 20 }} />
+           </div>
         </div>
       </div>
     );
@@ -162,17 +166,17 @@ export class ClassificationButtonsChange extends Component {
   render() {
     return (
       <div style={{ display: 'flex', margin: 15, height: 100, borderRadius: 5, justifyContent: 'center', alignItems: 'center' }}>
-        <div onClick={() =>this.props.changeClassification('negative')} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%', backgroundColor: 'lightcoral', borderRadius:5 }}>
+        <div onClick={() => this.props.changeClassification('negative')} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%', backgroundColor: 'lightcoral', borderRadius: 5 }}>
           <div style={{ fontSize: 22, fontWeight: 'bold', fontFamily: "Helvetica Neue" }}>
             NEGATIVE
           </div>
         </div>
-        <div onClick={() =>this.props.changeClassification('positive')} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%', backgroundColor: 'lightgreen', marginLeft: 15, marginRight: 10, borderRadius:5 }}>
+        <div onClick={() => this.props.changeClassification('positive')} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%', backgroundColor: 'lightgreen', marginLeft: 15, marginRight: 10, borderRadius: 5 }}>
           <div style={{ fontSize: 22, fontWeight: 'bold', fontFamily: "Helvetica Neue" }}>
             POSITIVE
           </div>
         </div>
-        <div onClick={() =>this.props.changeClassification('neutral')} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%', backgroundColor: 'lightgrey', borderRadius:5 }}>
+        <div onClick={() => this.props.changeClassification('neutral')} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%', backgroundColor: 'lightgrey', borderRadius: 5 }}>
           <div style={{ fontSize: 22, fontWeight: 'bold', fontFamily: "Helvetica Neue" }}>
             NEUTRAL
           </div>
@@ -197,7 +201,7 @@ export class TweetTop extends Component {
             <div style={{ color: 'grey', margin: 5, fontSize: 15 }}>{this.props.location}</div>
           </div>
         </div>
-        <img src={twitterLogo} style={{ height: 100, width: 100, marginLeft: 'auto', paddingRight: 10 }} />
+          <img src={twitterLogo} style={{ height: 100, width: 100, marginLeft: 'auto', paddingRight: 10 }} />
       </div>
     )
   }
