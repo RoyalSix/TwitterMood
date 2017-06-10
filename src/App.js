@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import logo from './applia_icon.png';
+import next_button from './next_button.svg';
 import './App.css';
 const twitterLogo = "https://upload.wikimedia.org/wikipedia/en/9/9f/Twitter_bird_logo_2012.svg";
 
@@ -11,14 +12,14 @@ class App extends Component {
     this.state = {
       attemptedCat: null,
       tweetText: null,
-      tweetSafeText:null,
+      tweetSafeText: null,
       tweet: null,
       posAvg: null,
       negAvg: null,
       profileImage: null,
       userName: null,
       screenName: null,
-      createdAt:null
+      createdAt: null
     };
   }
   componentWillMount() {
@@ -26,9 +27,9 @@ class App extends Component {
   }
 
   formatDate(date) {
-    var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour:'numeric', minute:'numeric' };
+    var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
     return date.toLocaleString("en-US", options)
-}
+  }
 
   trainTweetForCategory(tweet, category, callback) {
     var xhr = new XMLHttpRequest();
@@ -57,8 +58,8 @@ class App extends Component {
           tweetSafeText: tweetObj.safeText.replace(/^"(.+(?="$))"$/, '$1'),
           profileImageUrl: tweetObj.user.profile_image_url_https,
           userName: tweetObj.user.name,
-          screenName: tweetObj.user.screen_name,
-          createdAt:this.formatDate(new Date(tweetObj.created_at))
+          screenName: '@' + tweetObj.user.screen_name,
+          createdAt: this.formatDate(new Date(tweetObj.created_at))
         })
         this.getCategory(xhr.responseText);
       }
@@ -110,23 +111,35 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h2>Welcome to Applia.io</h2>
         </div>
-        <div className="App-intro" style={{ display: 'flex', justifyContent: 'center' }}>
-          <div style={{ flexDirection: 'column', width: 450, height: 400, borderColor: 'black', borderWidth: .5, borderStyle: 'solid', display: 'flex', }}>
-            <div style={{ display: 'flex', flexDirection: 'row', width: 'auto' }}>
+        <div className="App-intro" style={{ display: 'flex', justifyContent: 'center', margin: 20, }}>
+          <div style={{ flexDirection: 'column', width: 450, height: 400, borderWidth: .5, borderRadius: 5, display: 'flex', }}>
+            <div style={{ display: 'flex', flexDirection: 'row', width: 'auto', margin: 15, }}>
               <img src={this.state.profileImageUrl} style={{ height: 100, width: 100, borderRadius: 5, alignSelf: 'flex-start' }} />
               <div style={{ display: "flex", flexDirection: 'column', justifyContent: 'flex-start', marginLeft: 10 }}>
                 <div style={{ textAlign: 'left', fontFamily: "Helvetica Neue" }}>{this.state.userName}</div>
-                <div style={{ textAlign: 'left', fontFamily: "Helvetica Neue", color:'grey' }}>@{this.state.screenName}</div>
+                <div style={{ textAlign: 'left', fontFamily: "Helvetica Neue", color: 'grey' }}>{this.state.screenName}</div>
               </div>
               <img src={twitterLogo} style={{ height: 100, width: 100, marginLeft: 'auto', paddingRight: 10 }} />
             </div>
-            <div style={{flexDirection:'column', display: 'flex', marginTop: 20, fontFamily: "Helvetica Neue", textAlign: 'left', paddingLeft:10 }}>
+            <div style={{ flexDirection: 'column', display: 'flex', marginLeft: 15, marginRight: 15, fontFamily: "Helvetica Neue", textAlign: 'left', }}>
               <div>{this.state.tweetSafeText}</div>
-              <div style={{paddingTop:10, color:'grey'}}>{this.state.createdAt}</div>
+              <div style={{ paddingTop: 10, color: 'grey' }}>{this.state.createdAt}</div>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'center', margin: 10, marginBottom: 5 }}>
+              <div onClick={() => this.pressedButton('negative')} className={"button-select"} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: 5, width: '100%', height: 50, borderRadius: 5, outline: 0, border: 0, }}>
+                <div style={{ fontFamily: "Helvetica Neue", fontWeight: 'bold' }}>NEGATIVE</div>
+              </div>
+              <div onClick={() => this.pressedButton('positive')} className={"button-select"} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: 5, width: '100%', height: 50, borderRadius: 5, outline: 0, border: 0, }}>
+                <div style={{ fontFamily: "Helvetica Neue", fontWeight: 'bold' }}>POSITIVE</div>
+              </div>
+            </div>
+            <div onClick={() => this.pressedButton('neutral')} className={"button-skip"} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: 15, marginTop: 0, width: 'auto', height: 50, borderRadius: 5, outline: 0, border: 0 }}>
+              <div style={{ fontFamily: "Helvetica Neue", fontWeight: 'bold' }}>NEUTRAL</div>
             </div>
             <div>
             </div>
           </div>
+          <img onClick={() => this.pressedButton('skip')} src={next_button} style={{ height: 70, width: 70, alignSelf: 'center', marginLeft: 20 }} />
         </div>
       </div>
     );

@@ -17,6 +17,22 @@
   font-size: large;
 }
 
+.button-select:hover {
+  background-color: #0084b4;
+}
+
+.button-select {
+  background-color: #3cf;
+}
+
+.button-skip:hover {
+  background-color: #505050;
+}
+
+.button-skip {
+  background-color: grey;
+}
+
 /*@keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
