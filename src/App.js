@@ -4,22 +4,22 @@ import next_button from './next_button.svg';
 import './App.css';
 const twitterLogo = "https://upload.wikimedia.org/wikipedia/en/9/9f/Twitter_bird_logo_2012.svg";
 
-const local = true;
-
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      attemptedCat: null,
+      attemptedCat: "positive",
       tweetText: null,
-      tweetSafeText: null,
+      tweetSafeText: `This is tweet about something. 
+      Your job is to decide whether or not the tweet is referring to something positive or negative.`,
       tweet: null,
-      posAvg: null,
-      negAvg: null,
+      posAvg: 2039,
+      negAvg: 3190,
       profileImage: null,
-      userName: null,
-      screenName: null,
-      createdAt: null
+      userName: "Jay Scott",
+      screenName: "@RoyalSix",
+      createdAt: this.formatDate(new Date("Sat Jun 10 2017 12:07:39 GMT-0400 (EDT)")),
+      location: "USA"
     };
   }
   componentWillMount() {
@@ -27,7 +27,7 @@ class App extends Component {
   }
 
   formatDate(date) {
-    var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+    var options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
     return date.toLocaleString("en-US", options)
   }
 
@@ -100,11 +100,16 @@ class App extends Component {
     };
   }
 
+  changeButtons() {
+
+  }
+
 
   render() {
     const betterAmount = this.state.posAvg > this.state.negAvg ? "happy" : "not happy";
     const worstAmount = this.state.posAvg < this.state.negAvg ? "happy" : "not happy";
     var twitterStatement = `Users who are ${betterAmount} have ${Math.round((Math.abs(this.state.posAvg - this.state.negAvg) / Math.max(this.state.posAvg, this.state.negAvg)) * 100)}% more followers than those are ${worstAmount}`;
+    const buttonBackgroundColor = this.state.attemptedCat == 'positive' ? 'lightgreen' : this.state.attemptedCat == 'neutral' ? 'lightgrey' : 'lightred';
     return (
       <div className="App">
         <div className="App-header">
@@ -112,41 +117,74 @@ class App extends Component {
           <h2>Welcome to Applia.io</h2>
         </div>
         <div className="App-intro" style={{ display: 'flex', justifyContent: 'center', margin: 20, }}>
-          <div style={{ flexDirection: 'column', width: 450, height: 400, borderWidth: .5, borderRadius: 5, display: 'flex', }}>
-            <div style={{ display: 'flex', flexDirection: 'row', width: 'auto', margin: 15, }}>
-              <img src={this.state.profileImageUrl} style={{ height: 100, width: 100, borderRadius: 5, alignSelf: 'flex-start' }} />
-              <div style={{ display: "flex", flexDirection: 'column', justifyContent: 'flex-start', marginLeft: 10 }}>
-                <div style={{ textAlign: 'left', fontFamily: "Helvetica Neue" }}>{this.state.userName}</div>
-                <div style={{ textAlign: 'left', fontFamily: "Helvetica Neue", color: 'grey' }}>{this.state.screenName}</div>
-              </div>
-              <img src={twitterLogo} style={{ height: 100, width: 100, marginLeft: 'auto', paddingRight: 10 }} />
-            </div>
+          <div style={{ flexDirection: 'column', width: 600, height: 350, borderWidth: .5, borderRadius: 5, display: 'flex', }}>
+            <TweetTop {...this.state}/>
             <div style={{ flexDirection: 'column', display: 'flex', marginLeft: 15, marginRight: 15, fontFamily: "Helvetica Neue", textAlign: 'left', }}>
               <div>{this.state.tweetSafeText}</div>
-              <div style={{ paddingTop: 10, color: 'grey' }}>{this.state.createdAt}</div>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'center', margin: 10, marginBottom: 5 }}>
-              <div onClick={() => this.pressedButton('negative')} className={"button-select"} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: 5, width: '100%', height: 50, borderRadius: 5, outline: 0, border: 0, }}>
-                <div style={{ fontFamily: "Helvetica Neue", fontWeight: 'bold' }}>NEGATIVE</div>
-              </div>
-              <div onClick={() => this.pressedButton('positive')} className={"button-select"} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: 5, width: '100%', height: 50, borderRadius: 5, outline: 0, border: 0, }}>
-                <div style={{ fontFamily: "Helvetica Neue", fontWeight: 'bold' }}>POSITIVE</div>
-              </div>
-            </div>
-            <div onClick={() => this.pressedButton('neutral')} className={"button-skip"} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: 15, marginTop: 0, width: 'auto', height: 50, borderRadius: 5, outline: 0, border: 0 }}>
-              <div style={{ fontFamily: "Helvetica Neue", fontWeight: 'bold' }}>NEUTRAL</div>
-            </div>
-            <div>
-            </div>
+            <ClassificationButtons attemptedCat={this.state.attemptedCat} changeButtons={this.changeButtons} buttonBackgroundColor={buttonBackgroundColor} />
           </div>
-          <img onClick={() => this.pressedButton('skip')} src={next_button} style={{ height: 70, width: 70, alignSelf: 'center', marginLeft: 20 }} />
+          <img onClick={() => this.pressedButton()} src={next_button} style={{ height: 70, width: 70, alignSelf: 'center', marginLeft: 20 }} />
         </div>
       </div>
     );
   }
 }
 
+export class ClassificationButtons extends Component {
+  render() {
+    return (
+      <div style={{ display: 'flex', margin: 15, borderWidth: .5, borderStyle: 'solid', height: 100, borderRadius: 5, justifyContent: 'center', alignItems: 'center' }}>
+        <div style={{ justifyContent: 'center', alignItems: 'center', display: 'flex', fontFamily: "Helvetica Neue", width: '100%', borderRightWidth: 1, borderRightStyle: 'solid', borderRightColor: 'black', height: '100%', backgroundColor: '#3cf' }}>
+          <div style={{ fontSize: 22, fontWeight: 'bold' }}>
+            CLASSIFICATION:
+                </div>
+        </div>
+        <div style={{ height: '100%', backgroundColor: this.props.buttonBackgroundColor, justifyContent: 'center', alignItems: 'center', display: 'flex', fontFamily: "Helvetica Neue", width: '100%', }}>
+          <div style={{ fontSize: 22, fontWeight: 'bold' }}>
+            {this.props.attemptedCat.toUpperCase()}
+            <div onClick={this.props.changeButtons} style={{ fontSize: 12, fontWeight: 'normal' }}>Click to change</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
+
+export class TweetTop extends Component {
+  render() {
+    return (
+      <div style={{ display: 'flex', margin: 15, justifyContent: 'center' }}>
+        <img src={this.props.profileImageUrl} style={{ height: 100, width: 100, borderRadius: 5, }} />
+        <div style={{ display: "flex", flexDirection: 'column', marginLeft: 'auto', justifyContent: 'center' }}>
+          <div>
+            <div style={{ fontFamily: "Helvetica Neue" }}>{this.props.userName}</div>
+            <div style={{ fontFamily: "Helvetica Neue", color: 'grey' }}>{this.props.screenName}</div>
+          </div>
+          <div style={{ display: 'flex', }}>
+            <div style={{ color: 'grey', margin: 5, fontSize: 15 }}>{this.props.createdAt}</div>
+            <div style={{ color: 'grey', margin: 5, fontSize: 15 }}>{this.props.location}</div>
+          </div>
+        </div>
+        <img src={twitterLogo} style={{ height: 100, width: 100, marginLeft: 'auto', paddingRight: 10 }} />
+      </div>
+    )
+  }
+}
+
 export default App;
+
+            //         <div style={{ display: 'flex', justifyContent: 'center', margin: 10, marginBottom: 5 }}>
+            //   <div onClick={() => this.pressedButton('negative')} className={"button-select"} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: 5, width: '100%', height: 50, borderRadius: 5, outline: 0, border: 0, }}>
+            //     <div style={{ fontFamily: "Helvetica Neue", fontWeight: 'bold' }}>NEGATIVE</div>
+            //   </div>
+            //   <div onClick={() => this.pressedButton('positive')} className={"button-select"} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: 5, width: '100%', height: 50, borderRadius: 5, outline: 0, border: 0, }}>
+            //     <div style={{ fontFamily: "Helvetica Neue", fontWeight: 'bold' }}>POSITIVE</div>
+            //   </div>
+            // </div>
+            // <div onClick={() => this.pressedButton('neutral')} className={"button-skip"} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: 15, marginTop: 0, width: 'auto', height: 50, borderRadius: 5, outline: 0, border: 0 }}>
+            //   <div style={{ fontFamily: "Helvetica Neue", fontWeight: 'bold' }}>NEUTRAL</div>
+            // </div>
 
           // <img src={this.state.profileImageUrl} style={{height:30, width:30, float:'left'}}/>
           // <div>Current Tweet: </div>
@@ -162,3 +200,4 @@ export default App;
           // <div>
           //   {twitterStatement}
           // </div>
+          //<div style={{ color: 'grey' }}>{this.state.createdAt}</div>
