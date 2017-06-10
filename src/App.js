@@ -19,8 +19,10 @@ class App extends Component {
       userName: "Jay Scott",
       screenName: "@RoyalSix",
       createdAt: this.formatDate(new Date("Sat Jun 10 2017 12:07:39 GMT-0400 (EDT)")),
-      location: "USA"
+      location: "USA",
+      buttonChange: false
     };
+    this.changeButtons = this.changeButtons.bind(this);
   }
   componentWillMount() {
     this.getNewTweet();
@@ -74,7 +76,7 @@ class App extends Component {
     xhr.send();
     xhr.onreadystatechange = (e) => {
       if (xhr.readyState == 4 && xhr.status == 200) {
-        this.setState({ attemptedCat: xhr.responseText });
+        this.setState({ attemptedCat: xhr.responseText.replace(/^"(.+(?="$))"$/, '$1') });
       }
     };
   }
@@ -101,7 +103,9 @@ class App extends Component {
   }
 
   changeButtons() {
-
+    this.setState({
+      buttonChange: !this.state.buttonChange
+    })
   }
 
 
@@ -109,7 +113,7 @@ class App extends Component {
     const betterAmount = this.state.posAvg > this.state.negAvg ? "happy" : "not happy";
     const worstAmount = this.state.posAvg < this.state.negAvg ? "happy" : "not happy";
     var twitterStatement = `Users who are ${betterAmount} have ${Math.round((Math.abs(this.state.posAvg - this.state.negAvg) / Math.max(this.state.posAvg, this.state.negAvg)) * 100)}% more followers than those are ${worstAmount}`;
-    const buttonBackgroundColor = this.state.attemptedCat == 'positive' ? 'lightgreen' : this.state.attemptedCat == 'neutral' ? 'lightgrey' : 'lightred';
+    const buttonBackgroundColor = this.state.attemptedCat == 'positive' ? 'lightgreen' : this.state.attemptedCat == 'neutral' ? 'lightgrey' : 'lightcoral';
     return (
       <div className="App">
         <div className="App-header">
@@ -118,13 +122,16 @@ class App extends Component {
         </div>
         <div className="App-intro" style={{ display: 'flex', justifyContent: 'center', margin: 20, }}>
           <div style={{ flexDirection: 'column', width: 600, height: 350, borderWidth: .5, borderRadius: 5, display: 'flex', }}>
-            <TweetTop {...this.state}/>
+            <TweetTop {...this.state} />
             <div style={{ flexDirection: 'column', display: 'flex', marginLeft: 15, marginRight: 15, fontFamily: "Helvetica Neue", textAlign: 'left', }}>
               <div>{this.state.tweetSafeText}</div>
             </div>
-            <ClassificationButtons attemptedCat={this.state.attemptedCat} changeButtons={this.changeButtons} buttonBackgroundColor={buttonBackgroundColor} />
+            {!this.state.buttonChange ?
+              <ClassificationButtons attemptedCat={this.state.attemptedCat} changeButtons={this.changeButtons} buttonBackgroundColor={buttonBackgroundColor} /> :
+              <ClassificationButtonsChange changeClassification={(classification)=>this.setState({attemptedCat:classification,buttonChange:!this.state.buttonChange })}/>
+            }
           </div>
-          <img onClick={() => this.pressedButton()} src={next_button} style={{ height: 70, width: 70, alignSelf: 'center', marginLeft: 20 }} />
+          <img onClick={() => this.pressedButton(this.state.attemptedCat)} src={next_button} style={{ height: 70, width: 70, alignSelf: 'center', marginLeft: 20 }} />
         </div>
       </div>
     );
@@ -134,7 +141,7 @@ class App extends Component {
 export class ClassificationButtons extends Component {
   render() {
     return (
-      <div style={{ display: 'flex', margin: 15, borderWidth: .5, borderStyle: 'solid', height: 100, borderRadius: 5, justifyContent: 'center', alignItems: 'center' }}>
+      <div style={{ display: 'flex', margin: 15, height: 100, borderRadius: 5, justifyContent: 'center', alignItems: 'center' }}>
         <div style={{ justifyContent: 'center', alignItems: 'center', display: 'flex', fontFamily: "Helvetica Neue", width: '100%', borderRightWidth: 1, borderRightStyle: 'solid', borderRightColor: 'black', height: '100%', backgroundColor: '#3cf' }}>
           <div style={{ fontSize: 22, fontWeight: 'bold' }}>
             CLASSIFICATION:
@@ -143,7 +150,31 @@ export class ClassificationButtons extends Component {
         <div style={{ height: '100%', backgroundColor: this.props.buttonBackgroundColor, justifyContent: 'center', alignItems: 'center', display: 'flex', fontFamily: "Helvetica Neue", width: '100%', }}>
           <div style={{ fontSize: 22, fontWeight: 'bold' }}>
             {this.props.attemptedCat.toUpperCase()}
-            <div onClick={this.props.changeButtons} style={{ fontSize: 12, fontWeight: 'normal' }}>Click to change</div>
+            <div className={"link"} onClick={this.props.changeButtons} style={{ fontSize: 12, fontWeight: 'normal' }}>Click to change</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
+
+export class ClassificationButtonsChange extends Component {
+  render() {
+    return (
+      <div style={{ display: 'flex', margin: 15, height: 100, borderRadius: 5, justifyContent: 'center', alignItems: 'center' }}>
+        <div onClick={() =>this.props.changeClassification('negative')} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%', backgroundColor: 'lightcoral', borderRadius:5 }}>
+          <div style={{ fontSize: 22, fontWeight: 'bold', fontFamily: "Helvetica Neue" }}>
+            NEGATIVE
+          </div>
+        </div>
+        <div onClick={() =>this.props.changeClassification('positive')} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%', backgroundColor: 'lightgreen', marginLeft: 15, marginRight: 10, borderRadius:5 }}>
+          <div style={{ fontSize: 22, fontWeight: 'bold', fontFamily: "Helvetica Neue" }}>
+            POSITIVE
+          </div>
+        </div>
+        <div onClick={() =>this.props.changeClassification('neutral')} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%', backgroundColor: 'lightgrey', borderRadius:5 }}>
+          <div style={{ fontSize: 22, fontWeight: 'bold', fontFamily: "Helvetica Neue" }}>
+            NEUTRAL
           </div>
         </div>
       </div>
