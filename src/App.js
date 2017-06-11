@@ -9,18 +9,17 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      attemptedCat: "positive",
+      attemptedCat: "",
       tweetText: null,
-      tweetSafeText: `This is tweet about something. 
-      Your job is to decide whether or not the tweet is referring to something positive or negative.`,
+      tweetSafeText: "",
       tweet: null,
-      posAvg: 2039,
-      negAvg: 3190,
+      posAvg: null,
+      negAvg: null,
       profileImage: null,
-      userName: "Jay Scott",
-      screenName: "@RoyalSix",
-      createdAt: this.formatDate(new Date("Sat Jun 10 2017 12:07:39 GMT-0400 (EDT)")),
-      location: "USA",
+      userName: "",
+      screenName: "",
+      createdAt: "",
+      location: "",
       buttonChange: false
     };
     this.changeButtons = this.changeButtons.bind(this);
@@ -132,10 +131,16 @@ class App extends Component {
               <ClassificationButtonsChange changeClassification={(classification) => this.setState({ attemptedCat: classification, buttonChange: !this.state.buttonChange })} />
             }
           </div>
-      <div style={{ display: 'flex', flexDirection:'column', justifyContent:'space-around' }}>
-          <img onClick={() => this.pressedButton(this.state.attemptedCat)} src={next_button} style={{ height: 70, width: 70, alignSelf: 'center', marginLeft: 20 }} />
-           <img onClick={() => this.pressedButton()} src={reload} style={{ height: 70, width: 70, alignSelf: 'center', marginLeft: 20 }} />
-           </div>
+          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-around' }}>
+            <div style={{justifyContent:'center', display:'flex', flexDirection:'column', alignItems:'center'}}>
+              <img onClick={() => this.pressedButton(this.state.attemptedCat)} src={next_button} style={{ height: 70, width: 70, alignSelf: 'center', }} />
+              <div style={{fontSize:12, paddingTop:5}}>Next</div>
+            </div>
+            <div style={{justifyContent:'center', display:'flex', flexDirection:'column', alignItems:'center'}}>
+              <img onClick={() => this.pressedButton()} src={reload} style={{ height: 70, width: 70, alignSelf: 'center' }} />
+              <div style={{fontSize:12, paddingTop:5}}>Reload</div>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -201,7 +206,7 @@ export class TweetTop extends Component {
             <div style={{ color: 'grey', margin: 5, fontSize: 15 }}>{this.props.location}</div>
           </div>
         </div>
-          <img src={twitterLogo} style={{ height: 100, width: 100, marginLeft: 'auto', paddingRight: 10 }} />
+        <img src={twitterLogo} style={{ height: 100, width: 100, marginLeft: 'auto', paddingRight: 10 }} />
       </div>
     )
   }
