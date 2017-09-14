@@ -132,13 +132,13 @@ class App extends Component {
             }
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-around' }}>
-            <div style={{justifyContent:'center', display:'flex', flexDirection:'column', alignItems:'center'}}>
-              <img onClick={() => this.pressedButton(this.state.attemptedCat)} src={next_button} style={{ height: 70, width: 70, alignSelf: 'center', }} />
-              <div style={{fontSize:12, paddingTop:5}}>Next</div>
-            </div>
-            <div style={{justifyContent:'center', display:'flex', flexDirection:'column', alignItems:'center'}}>
+            <div style={{ justifyContent: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <img onClick={() => this.pressedButton()} src={reload} style={{ height: 70, width: 70, alignSelf: 'center' }} />
-              <div style={{fontSize:12, paddingTop:5}}>Reload</div>
+              <div style={{ fontSize: 12, paddingTop: 5 }}>Reload</div>
+            </div>
+            <div style={{ justifyContent: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <img onClick={() => this.pressedButton(this.state.attemptedCat)} src={next_button} style={{ height: 70, width: 70, alignSelf: 'center', }} />
+              <div style={{ fontSize: 12, paddingTop: 5 }}>Next</div>
             </div>
           </div>
         </div>
